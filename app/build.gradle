@@ -1,0 +1,54 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.0"
+    defaultConfig {
+        applicationId "dev.noypi.demo.buildtypes"
+        minSdkVersion 24
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    signingConfigs {
+        release {
+            storeFile file(NOYPIDEV_SIGNING_KEYPATH)
+            keyAlias NOYPIDEV_SIGNING_KEYALIAS
+            storePassword NOYPIDEV_SIGNING_KSTOREPWD
+            keyPassword NOYPIDEV_SIGNING_KEYPWD
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+
+            buildConfigField("String", "BASE_URL", '"https://production.noypi.dev/"')
+            buildConfigField("String", "SOME_TOKEN", '"abcdefGHIJKLmnop"')
+            buildConfigField("boolean", "IS_LOGGING_ENABLED", "false")
+        }
+        prodDebug {
+            initWith release
+            debuggable true
+        }
+        debug {
+            initWith release
+            debuggable true
+
+            buildConfigField("String", "BASE_URL", '"https://staging.noypi.dev/"')
+            buildConfigField("String", "SOME_TOKEN", '"12394oqidncdueh94"')
+            buildConfigField("boolean", "IS_LOGGING_ENABLED", "true")
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+}
